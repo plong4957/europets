@@ -15,7 +15,7 @@ import { db } from "../../firebase/firebase";
 function ProductManager() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-
+  const [description, setDescription] = useState("");
   const [products, setProducts] = useState([]);
 
   // GET PRODUCTS
@@ -59,7 +59,7 @@ function ProductManager() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    if (!name || !price) {
+    if (!name || !price || !description) {
     alert("Please enter all fields");
     return;
     }
@@ -68,13 +68,14 @@ function ProductManager() {
       await addDoc(collection(db, "products"), {
         name,
         price,
+        description,
       });
 
       alert("Product added!");
 
       setName("");
       setPrice("");
-
+      setDescription("");
       fetchProducts();
     } catch (error) {
       console.log(error);
@@ -137,6 +138,13 @@ function ProductManager() {
         <br />
         <br />
 
+        <textarea
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        ></textarea>
+        <br />
+        <br />
         <button type="submit">Add Product</button>
       </form>
 
@@ -150,6 +158,8 @@ function ProductManager() {
 
           <p>${product.price}</p>
 
+          <p>{product.description}</p>
+          
           <button onClick={() => handleDelete(product.id)}>
             Delete
           </button>
