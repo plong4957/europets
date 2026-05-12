@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import "./ProductManager.css";
 import {
   collection,
   addDoc,
@@ -16,6 +16,7 @@ function ProductManager() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
   const [products, setProducts] = useState([]);
 
   // GET PRODUCTS
@@ -59,7 +60,7 @@ function ProductManager() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    if (!name || !price || !description) {
+    if (!name || !price || !description || !image) {
     alert("Please enter all fields");
     return;
     }
@@ -76,6 +77,7 @@ function ProductManager() {
       setName("");
       setPrice("");
       setDescription("");
+      setImage("");
       fetchProducts();
     } catch (error) {
       console.log(error);
@@ -114,10 +116,10 @@ function ProductManager() {
   };
 
   return (
-    <div>
-      <h1>Product Manager</h1>
+    <div className="container">
+      <h1 className="title">Product Manager</h1>
 
-      <form onSubmit={handleAddProduct}>
+      <form className="form" onSubmit={handleAddProduct}>
         <input
           type="text"
           placeholder="Product name"
@@ -143,34 +145,46 @@ function ProductManager() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></textarea>
+
         <br />
         <br />
+
+        <input 
+          type="text"
+          placeholder="Image URL"
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
+        />
+
         <button type="submit">Add Product</button>
       </form>
 
       <hr />
 
       <h2>Product List</h2>
-
+    <div className="product-grid">
       {products.map((product) => (
-        <div key={product.id}>
+        <div className="product-card" key={product.id}>
           <h3>{product.name}</h3>
+
+          <img src={product.image} alt={product.name} width="200" />  
 
           <p>${product.price}</p>
 
           <p>{product.description}</p>
-          
-          <button onClick={() => handleDelete(product.id)}>
+        <div className="actions">
+          <button className="delete-btn" onClick={() => handleDelete(product.id)}>
             Delete
           </button>
 
-          <button onClick={() => handleUpdate(product.id)}>
+          <button className="update-btn" onClick={() => handleUpdate(product.id)}>
             Update
           </button>
-
-          <hr />
         </div>
+          <hr />
+        </div> 
       ))}
+      </div>  
     </div>
   );
 }
