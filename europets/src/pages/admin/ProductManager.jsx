@@ -1,0 +1,148 @@
+import { useState, useEffect } from "react";
+
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+
+import { db } from "../../firebase/firebase";
+
+function ProductManager() {
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+
+  const [products, setProducts] = useState([]);
+
+  // GET PRODUCTS
+  const fetchProducts = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "products"));
+
+      const productList = [];
+
+      querySnapshot.forEach((docItem) => {
+        productList.push({
+          id: docItem.id,
+          ...docItem.data(),
+        });
+      });
+
+      setProducts(productList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // ADD PRODUCT
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+
+    try {
+      await addDoc(collection(db, "products"), {
+        name,
+        price,
+      });
+
+      alert("Product added!");
+
+      setName("");
+      setPrice("");
+
+      fetchProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // DELETE PRODUCT
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "products", id));
+
+      fetchProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // UPDATE PRODUCT
+  const handleUpdate = async (id) => {
+    const newName = prompt("Enter new product name");
+
+    if (!newName) return;
+
+    try {
+      const productRef = doc(db, "products", id);
+
+      await updateDoc(productRef, {
+        name: newName,
+      });
+
+      fetchProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Product Manager</h1>
+
+      <form onSubmit={handleAddProduct}>
+        <input
+          type="text"
+          placeholder="Product name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <br />
+        <br />
+
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+        />
+
+        <br />
+        <br />
+
+        <button type="submit">Add Product</button>
+      </form>
+
+      <hr />
+
+      <h2>Product List</h2>
+
+      {products.map((product) => (
+        <div key={product.id}>
+          <h3>{product.name}</h3>
+
+          <p>${product.price}</p>
+
+          <button onClick={() => handleDelete(product.id)}>
+            Delete
+          </button>
+
+          <button onClick={() => handleUpdate(product.id)}>
+            Update
+          </button>
+
+          <hr />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default ProductManager;
