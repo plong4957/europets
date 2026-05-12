@@ -7,6 +7,7 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../../firebase/firebase";
@@ -38,13 +39,31 @@ function ProductManager() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    const unsubscribe = onSnapshot(
+      collection(db, "products"), 
+      (snapshot) => {
+        const productList = [];
+        snapshot.forEach((doc) => {
+          productList.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        setProducts(productList);
+      }
+    );
+    return () => unsubscribe();
   }, []);
 
   // ADD PRODUCT
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
+    if (!name || !price) {
+    alert("Please enter all fields");
+    return;
+    }
+    
     try {
       await addDoc(collection(db, "products"), {
         name,
@@ -76,7 +95,7 @@ function ProductManager() {
   // UPDATE PRODUCT
   const handleUpdate = async (id) => {
     const newName = prompt("Enter new product name");
-
+    const newPrice = prompt("Enter new product price");
     if (!newName) return;
 
     try {
@@ -84,6 +103,7 @@ function ProductManager() {
 
       await updateDoc(productRef, {
         name: newName,
+        price: newPrice,
       });
 
       fetchProducts();
