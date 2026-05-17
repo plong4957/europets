@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import ProductManager from "./pages/admin/ProductManager";
+import CategoryManager from "./pages/admin/CategoryManager";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 // Customer pages — sẽ tạo ở các bước tiếp theo
@@ -38,6 +39,15 @@ function App() {
         element={
           <ProtectedRoute>
             <ProductManager />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/categories"
+        element={
+          <ProtectedRoute>
+            <CategoryManager />
           </ProtectedRoute>
         }
       />

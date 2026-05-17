@@ -9,6 +9,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
+import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload"; // ← THÊM
 
 function ProductManager() {
   // ── Form state ─────────────────────────────────────
@@ -16,11 +17,15 @@ function ProductManager() {
   const [price, setPrice]             = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage]             = useState("");
+  const [previewUrl, setPreviewUrl]   = useState(""); // ← THÊM: preview ảnh
 
   // ── UI state ───────────────────────────────────────
   const [products, setProducts]       = useState([]);
-  const [editingId, setEditingId]     = useState(null); // null = đang thêm mới
-  const [alert, setAlert]             = useState(null); // { type, msg }
+  const [editingId, setEditingId]     = useState(null);
+  const [alert, setAlert]             = useState(null);
+
+  // ── Cloudinary hook ────────────────────────────────
+  const { uploadImage, uploading, progress, error: uploadError } = useCloudinaryUpload(); // ← THÊM
 
   // ── Realtime listener ──────────────────────────────
   useEffect(() => {
@@ -43,7 +48,23 @@ function ProductManager() {
     setPrice("");
     setDescription("");
     setImage("");
+    setPreviewUrl(""); // ← THÊM
     setEditingId(null);
+  };
+
+  // ── THÊM: Chọn file → preview + upload Cloudinary ──
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Hiện preview ngay lập tức
+    setPreviewUrl(URL.createObjectURL(file));
+
+    // Upload lên Cloudinary, lưu URL vào state image
+    const url = await uploadImage(file);
+    if (url) {
+      setImage(url);
+    }
   };
 
   // ── ADD hoặc UPDATE ────────────────────────────────
@@ -59,11 +80,9 @@ function ProductManager() {
 
     try {
       if (editingId) {
-        // UPDATE
         await updateDoc(doc(db, "products", editingId), data);
         showAlert("success", "Cập nhật sản phẩm thành công!");
       } else {
-        // ADD — BUG FIX: thêm đủ 4 field bao gồm image
         await addDoc(collection(db, "products"), data);
         showAlert("success", "Thêm sản phẩm thành công!");
       }
@@ -79,6 +98,7 @@ function ProductManager() {
     setPrice(product.price || "");
     setDescription(product.description || "");
     setImage(product.image || "");
+    setPreviewUrl(product.image || ""); // ← THÊM: hiện ảnh cũ khi edit
     setEditingId(product.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -149,16 +169,44 @@ function ProductManager() {
             />
           </div>
 
+          {/* ── End Change Image ── */}
           <div className="pm-form-full">
-            <label className="pm-label">URL ảnh sản phẩm</label>
-            <input
-              className="pm-input"
-              type="text"
-              placeholder="https://... hoặc /images/product.png"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            />
+            <label className="pm-label">Ảnh sản phẩm</label>
+
+            {/* Nút chọn file */}
+            <label className="pm-upload-btn">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileChange}
+                disabled={uploading}
+                style={{ display: "none" }}
+              />
+              {uploading ? `Đang upload... ${progress}%` : previewUrl ? "Đổi ảnh" : "Chọn ảnh"}
+            </label>
+
+            {/* Progress bar */}
+            {uploading && (
+              <div className="pm-progress-track">
+                <div className="pm-progress-bar" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+
+            {/* Lỗi upload */}
+            {uploadError && (
+              <p className="pm-upload-error">{uploadError}</p>
+            )}
+
+            {/* Preview ảnh */}
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="pm-preview-img"
+              />
+            )}
           </div>
+          {/* ── End Change Image ── */}
 
           <div className="pm-form-actions">
             {editingId && (
@@ -166,7 +214,7 @@ function ProductManager() {
                 Hủy
               </button>
             )}
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="btn-primary" disabled={uploading}>
               {editingId ? "Lưu thay đổi" : "Thêm sản phẩm"}
             </button>
           </div>
