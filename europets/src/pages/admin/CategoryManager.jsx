@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./CategoryManager.css";
+import "../../styles/CategoryManager.css";
 import {
   collection,
   addDoc,

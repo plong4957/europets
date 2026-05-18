@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./ProductManager.css";
+import "../../styles/ProductManager.css";
 import {
   collection,
   addDoc,
