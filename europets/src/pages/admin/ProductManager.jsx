@@ -9,7 +9,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
-import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload"; // ← THÊM
+import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
 function ProductManager() {
   // ── Form state ─────────────────────────────────────
@@ -17,21 +17,33 @@ function ProductManager() {
   const [price, setPrice]             = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage]             = useState("");
-  const [previewUrl, setPreviewUrl]   = useState(""); // ← THÊM: preview ảnh
+  const [previewUrl, setPreviewUrl]   = useState("");
+  const [categoryId, setCategoryId]   = useState(""); // ← THÊM
 
   // ── UI state ───────────────────────────────────────
   const [products, setProducts]       = useState([]);
+  const [categories, setCategories]   = useState([]); // ← THÊM
+  const [filterCategory, setFilterCategory] = useState(""); // ← THÊM
   const [editingId, setEditingId]     = useState(null);
   const [alert, setAlert]             = useState(null);
 
   // ── Cloudinary hook ────────────────────────────────
-  const { uploadImage, uploading, progress, error: uploadError } = useCloudinaryUpload(); // ← THÊM
+  const { uploadImage, uploading, progress, error: uploadError } = useCloudinaryUpload();
 
-  // ── Realtime listener ──────────────────────────────
+  // ── Realtime listener: products ────────────────────
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
       const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       setProducts(list);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // ── Realtime listener: categories ──────────────────
+  useEffect(() => { // ← THÊM
+    const unsubscribe = onSnapshot(collection(db, "categories"), (snapshot) => {
+      const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setCategories(list);
     });
     return () => unsubscribe();
   }, []);
@@ -48,23 +60,18 @@ function ProductManager() {
     setPrice("");
     setDescription("");
     setImage("");
-    setPreviewUrl(""); // ← THÊM
+    setPreviewUrl("");
+    setCategoryId(""); // ← THÊM
     setEditingId(null);
   };
 
-  // ── THÊM: Chọn file → preview + upload Cloudinary ──
+  // ── Chọn file → preview + upload Cloudinary ────────
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Hiện preview ngay lập tức
     setPreviewUrl(URL.createObjectURL(file));
-
-    // Upload lên Cloudinary, lưu URL vào state image
     const url = await uploadImage(file);
-    if (url) {
-      setImage(url);
-    }
+    if (url) setImage(url);
   };
 
   // ── ADD hoặc UPDATE ────────────────────────────────
@@ -76,7 +83,7 @@ function ProductManager() {
       return;
     }
 
-    const data = { name, price, description, image };
+    const data = { name, price, description, image, categoryId }; // ← THÊM categoryId
 
     try {
       if (editingId) {
@@ -98,7 +105,8 @@ function ProductManager() {
     setPrice(product.price || "");
     setDescription(product.description || "");
     setImage(product.image || "");
-    setPreviewUrl(product.image || ""); // ← THÊM: hiện ảnh cũ khi edit
+    setPreviewUrl(product.image || "");
+    setCategoryId(product.categoryId || ""); // ← THÊM
     setEditingId(product.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -112,6 +120,17 @@ function ProductManager() {
     } catch (error) {
       showAlert("error", "Xóa thất bại: " + error.message);
     }
+  };
+
+  // ── Lọc sản phẩm theo danh mục ────────────────────
+  const filteredProducts = filterCategory // ← THÊM
+    ? products.filter((p) => p.categoryId === filterCategory)
+    : products;
+
+  // ── Helper: lấy tên danh mục từ id ────────────────
+  const getCategoryName = (id) => { // ← THÊM
+    const cat = categories.find((c) => c.id === id);
+    return cat ? cat.name : null;
   };
 
   // ── RENDER ─────────────────────────────────────────
@@ -159,6 +178,23 @@ function ProductManager() {
             />
           </div>
 
+          {/* ← THÊM: Dropdown danh mục */}
+          <div>
+            <label className="pm-label">Danh mục</label>
+            <select
+              className="pm-input"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+            >
+              <option value="">-- Chọn danh mục --</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="pm-form-full">
             <label className="pm-label">Mô tả sản phẩm *</label>
             <textarea
@@ -169,11 +205,9 @@ function ProductManager() {
             />
           </div>
 
-          {/* ── End Change Image ── */}
           <div className="pm-form-full">
             <label className="pm-label">Ảnh sản phẩm</label>
 
-            {/* Nút chọn file */}
             <label className="pm-upload-btn">
               <input
                 type="file"
@@ -185,28 +219,20 @@ function ProductManager() {
               {uploading ? `Đang upload... ${progress}%` : previewUrl ? "Đổi ảnh" : "Chọn ảnh"}
             </label>
 
-            {/* Progress bar */}
             {uploading && (
               <div className="pm-progress-track">
                 <div className="pm-progress-bar" style={{ width: `${progress}%` }} />
               </div>
             )}
 
-            {/* Lỗi upload */}
             {uploadError && (
               <p className="pm-upload-error">{uploadError}</p>
             )}
 
-            {/* Preview ảnh */}
             {previewUrl && (
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="pm-preview-img"
-              />
+              <img src={previewUrl} alt="Preview" className="pm-preview-img" />
             )}
           </div>
-          {/* ── End Change Image ── */}
 
           <div className="pm-form-actions">
             {editingId && (
@@ -222,19 +248,35 @@ function ProductManager() {
         </form>
       </div>
 
-      {/* Danh sách sản phẩm */}
+      {/* ← THÊM: Filter theo danh mục */}
       <div className="pm-list-header">
         <h2>Danh sách sản phẩm</h2>
-        <span className="pm-count">Hiển thị {products.length} sản phẩm</span>
+        <div className="pm-filter">
+          <select
+            className="pm-input"
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          >
+            <option value="">Tất cả danh mục</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          <span className="pm-count">
+            Hiển thị {filteredProducts.length} sản phẩm
+          </span>
+        </div>
       </div>
 
       <div className="pm-grid">
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <div className="pm-empty">
-            <p>Chưa có sản phẩm nào. Thêm sản phẩm đầu tiên bên trên!</p>
+            <p>Chưa có sản phẩm nào.</p>
           </div>
         ) : (
-          products.map((product) => (
+          filteredProducts.map((product) => (
             <div className="pm-card" key={product.id}>
 
               {product.image ? (
@@ -249,6 +291,12 @@ function ProductManager() {
 
               <div className="pm-card-body">
                 <h3 className="pm-card-name">{product.name}</h3>
+                {/* ← THÊM: hiện tên danh mục */}
+                {getCategoryName(product.categoryId) && (
+                  <span className="pm-card-category">
+                    {getCategoryName(product.categoryId)}
+                  </span>
+                )}
                 {product.price && (
                   <p className="pm-card-price">{product.price}</p>
                 )}
@@ -256,16 +304,10 @@ function ProductManager() {
               </div>
 
               <div className="pm-card-actions">
-                <button
-                  className="btn-edit"
-                  onClick={() => handleEdit(product)}
-                >
+                <button className="btn-edit" onClick={() => handleEdit(product)}>
                   Sửa
                 </button>
-                <button
-                  className="btn-delete"
-                  onClick={() => handleDelete(product.id)}
-                >
+                <button className="btn-delete" onClick={() => handleDelete(product.id)}>
                   Xóa
                 </button>
               </div>

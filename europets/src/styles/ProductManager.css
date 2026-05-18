@@ -390,3 +390,28 @@
   border-radius: 8px;
   border: 1px solid #e0e0e0;
 }
+
+/* Danh mục badge trên card */
+.pm-card-category {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #1a6b3c;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  margin-bottom: 0.4rem;
+}
+
+/* Filter bar */
+.pm-filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pm-filter .pm-input {
+  width: auto;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.9rem;
+}
