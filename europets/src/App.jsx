@@ -7,53 +7,37 @@ import Dashboard from "./pages/admin/Dashboard";
 import ProductManager from "./pages/admin/ProductManager";
 import CategoryManager from "./pages/admin/CategoryManager";
 import ProtectedRoute from "./routes/ProtectedRoute";
-
-// Customer pages — sẽ tạo ở các bước tiếp theo
-// import ProductsPage from "./pages/customer/ProductsPage";
-// import ProductDetail from "./pages/customer/ProductDetail";
+import AdminLayout from "./layouts/AdminLayout";
 
 function App() {
   return (
     <Routes>
 
       {/* ── Customer website ── */}
-      <Route path="/" element={<h1>Trang chủ (sẽ làm sau)</h1>} />
-      <Route path="/products" element={<h1>Danh sách sản phẩm (sẽ làm sau)</h1>} />
+      <Route path="/"           element={<h1>Trang chủ (sẽ làm sau)</h1>} />
+      <Route path="/products"   element={<h1>Danh sách sản phẩm (sẽ làm sau)</h1>} />
       <Route path="/products/:id" element={<h1>Chi tiết sản phẩm (sẽ làm sau)</h1>} />
 
-      {/* ── Admin panel ── */}
+      {/* ── Admin login (không cần auth) ── */}
       <Route path="/admin/login" element={<Login />} />
 
+      {/* ── Admin panel (cần auth + có sidebar) ── */}
       <Route
-        path="/admin/dashboard"
+        path="/admin/*"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <AdminLayout />
           </ProtectedRoute>
         }
-      />
-
-      {/* ✅ Fix: thêm ProtectedRoute cho trang này */}
-      <Route
-        path="/admin/products"
-        element={
-          <ProtectedRoute>
-            <ProductManager />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/categories"
-        element={
-          <ProtectedRoute>
-            <CategoryManager />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route path="dashboard"  element={<Dashboard />} />
+        <Route path="products"   element={<ProductManager />} />
+        <Route path="categories" element={<CategoryManager />} />
+      </Route>
 
     </Routes>
   );
 }
 
 export default App;
+

@@ -1,0 +1,185 @@
+/* src/styles/Dashboard.css */
+
+:root {
+  --green-dark:   #1A5E3A;
+  --green-light:  #E8F4EE;
+  --green-border: #A8D5B5;
+  --gray-bg:      #F5F7F5;
+  --gray-border:  #D1D5DB;
+  --text-main:    #1A1A1A;
+  --text-sub:     #6B7280;
+  --white:        #FFFFFF;
+  --radius:       8px;
+  --shadow:       0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ── LAYOUT ── */
+.db-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--text-main);
+}
+
+/* ── HEADER ── */
+.db-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--green-dark);
+}
+
+.db-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+.db-header span {
+  font-size: 13px;
+  color: var(--text-sub);
+  background: var(--green-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--green-border);
+}
+
+/* ── STAT CARDS ── */
+.db-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.db-stat-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+
+.db-stat-label {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin: 0 0 8px;
+}
+
+.db-stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+/* ── TABLE CARD ── */
+.db-table-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.db-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-border);
+}
+
+.db-table-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+.db-table-header span {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.db-table th {
+  text-align: left;
+  font-size: 12px;
+  color: var(--text-sub);
+  font-weight: 500;
+  padding: 10px 20px;
+  background: var(--gray-bg);
+  border-bottom: 1px solid var(--gray-border);
+}
+
+.db-table td {
+  padding: 12px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.db-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── THUMBNAIL ── */
+.db-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--gray-border);
+}
+
+.db-thumb-empty {
+  width: 44px;
+  height: 44px;
+  background: var(--gray-bg);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sub);
+  font-size: 12px;
+}
+
+/* ── BADGE ── */
+.db-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--green-light);
+  color: var(--green-dark);
+  border: 1px solid var(--green-border);
+}
+
+/* ── PRODUCT NAME ── */
+.db-product-name {
+  font-weight: 500;
+}
+
+/* ── PRICE ── */
+.db-price {
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+/* ── EMPTY ── */
+.db-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-sub);
+  font-size: 14px;
+}
