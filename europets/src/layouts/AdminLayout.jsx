@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/admin/dashboard',  label: 'Dashboard'  },
   { to: '/admin/products',   label: 'Sản phẩm'   },
   { to: '/admin/categories', label: 'Danh mục'   },
+  { to: '/admin/content',    label: 'Nội dung'   },
 ];
 
 export default function AdminLayout() {

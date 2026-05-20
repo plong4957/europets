@@ -8,6 +8,7 @@ import ProductManager from "./pages/admin/ProductManager";
 import CategoryManager from "./pages/admin/CategoryManager";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminLayout from "./layouts/AdminLayout";
+import ContentManager from "./pages/admin/ContentManager";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="dashboard"  element={<Dashboard />} />
         <Route path="products"   element={<ProductManager />} />
         <Route path="categories" element={<CategoryManager />} />
+        <Route path="content" element={<ContentManager />} />
       </Route>
 
     </Routes>
