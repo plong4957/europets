@@ -6,7 +6,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
-import Richeditor from "../../components/admin/Richeditor";
+import RichEditor from "../../components/admin/RichEditor";
 
 function ProductManager() {
   const [name,        setName]        = useState("");
