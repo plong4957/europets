@@ -1,0 +1,66 @@
+.product-card {
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--r-lg); overflow: hidden;
+  text-decoration: none; color: var(--text);
+  border: 1.5px solid var(--border-light);
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border);
+}
+
+/* Dark variant (on dark hero background) */
+.product-card--dark {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+}
+.product-card--dark .product-card__img-wrap { background: rgba(255,255,255,0.04); }
+.product-card--dark .product-card__body     { background: rgba(255,255,255,0.04); }
+.product-card--dark .product-card__name     { color: rgba(255,255,255,0.93); }
+.product-card--dark .product-card__cat {
+  background: rgba(61,168,110,0.2);
+  color: var(--accent);
+  border-color: rgba(61,168,110,0.3);
+}
+.product-card--dark:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(61,168,110,0.4);
+}
+
+/* Image area */
+.product-card__img-wrap {
+  aspect-ratio: 4/3;
+  background: var(--bg-alt);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+}
+.product-card__img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: contain; padding: 20px;
+  transition: transform 0.35s ease;
+}
+.product-card:hover .product-card__img-wrap img { transform: scale(1.06); }
+.product-card__placeholder { font-size: 3rem; color: var(--text-light); }
+
+/* Body */
+.product-card__body {
+  padding: 16px 18px; flex: 1;
+  display: flex; flex-direction: column; gap: 8px;
+  border-top: 1px solid var(--border-light);
+}
+.product-card__name {
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--primary-dark); text-align: center; line-height: 1.4;
+}
+.product-card__cat {
+  display: inline-block; align-self: center;
+  background: var(--accent-xlight);
+  color: var(--primary);
+  font-size: 0.7rem; font-weight: 700;
+  padding: 3px 12px; border-radius: var(--r-full);
+  border: 1px solid var(--accent-light);
+}
