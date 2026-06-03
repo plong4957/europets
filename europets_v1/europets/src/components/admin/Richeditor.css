@@ -1,0 +1,122 @@
+/* ── RichEditor ── */
+.re-wrap {
+  border: 1.5px solid var(--a-border);
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.re-wrap:focus-within {
+  border-color: var(--a-primary);
+  box-shadow: 0 0 0 3px rgba(26, 92, 63, 0.12);
+}
+
+/* ── Toolbar ── */
+.re-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  background: var(--a-bg-alt, #f9fafb);
+  border-bottom: 1.5px solid var(--a-border);
+}
+
+.re-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--a-text, #111);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.re-btn:hover {
+  background: var(--a-border, #e5e7eb);
+  border-color: var(--a-border, #e5e7eb);
+}
+.re-btn--active {
+  background: var(--a-success-bg, #dcfce7);
+  border-color: var(--a-primary, #1a5c3f);
+  color: var(--a-primary, #1a5c3f);
+}
+.re-btn--table {
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.re-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--a-border, #e5e7eb);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── Editable body ── */
+.re-body {
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--a-text, #111);
+  outline: none;
+  line-height: 1.65;
+  overflow-y: auto;
+}
+
+/* Placeholder */
+.re-body:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Content styling inside editor */
+.re-body strong, .re-body b { font-weight: 700; }
+.re-body em, .re-body i    { font-style: italic; }
+.re-body u                 { text-decoration: underline; }
+
+.re-body ul { list-style: disc;    padding-left: 20px; margin: 6px 0; }
+.re-body ol { list-style: decimal; padding-left: 20px; margin: 6px 0; }
+.re-body li { margin: 2px 0; }
+
+.re-body p  { margin: 4px 0; }
+.re-body br { display: block; }
+
+/* Table */
+.re-body .re-table,
+.re-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 0.88rem;
+}
+.re-body .re-table th,
+.re-body .re-table td,
+.re-body table th,
+.re-body table td {
+  border: 1px solid #d1d5db;
+  padding: 7px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.re-body .re-table thead th,
+.re-body table thead th {
+  background: var(--a-success-bg, #dcfce7);
+  font-weight: 700;
+  color: var(--a-primary, #1a5c3f);
+}
+.re-body .re-table tr:nth-child(even) td,
+.re-body table tr:nth-child(even) td {
+  background: #f9fafb;
+}
