@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import "./Richeditor.css";
+import "./RichEditor.css";
 
 const TOOLS = [
   { cmd: "bold",          icon: "B",  title: "In đậm (Ctrl+B)",     style: { fontWeight: 900 } },
